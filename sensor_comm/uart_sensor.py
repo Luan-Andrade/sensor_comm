@@ -14,15 +14,20 @@ class UARTSensor(Node):
         self.timer = self.create_timer(0.5, self.read_uart)
 
     def read_uart(self):
-        try:
-            if self.serial_port.in_waiting > 0:
-                data = self.serial_port.readline().decode().strip()
-                msg = String()
-                msg.data = data
-                self.publisher_.publish(msg)
-                self.get_logger().info(f'Dado UART: {data}')
-        except Exception as e:
-            self.get_logger().error(f'Erro UART: {e}')
+        if self.serial_port is not None:
+            try:
+                if self.serial_port.in_waiting > 0:
+                    data = self.serial_port.readline().decode().strip()
+                    try:
+                        temperatura = float(data)  # Converte a string para float (validação e manipulação)
+                        msg = String()
+                        msg.data = str(temperatura) # Publica a temperatura como string
+                        self.publisher_.publish(msg)
+                        self.get_logger().info(f'Temperatura recebida: {temperatura}')
+                    except ValueError:
+                        self.get_logger().error(f'Dados UART inválidos: {data}')
+            except Exception as e:
+                self.get_logger().error(f'Erro UART: {e}')
 
 def main(args=None):
     rclpy.init(args=args)
