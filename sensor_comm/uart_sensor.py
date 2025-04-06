@@ -9,7 +9,7 @@ class UARTSensor(Node):
         self.publisher_ = self.create_publisher(String, 'uart_data', 10)
         
         # Configurar a porta UART
-        self.serial_port = serial.Serial('/dev/sdc', baudrate=115200, timeout=1)
+        self.serial_port = serial.Serial('/dev/THS1', baudrate=115200, timeout=1)
 
         self.timer = self.create_timer(0.5, self.read_uart)
 
